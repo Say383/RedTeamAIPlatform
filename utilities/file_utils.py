@@ -2,105 +2,69 @@ import os
 import shutil
 import logging
 
-# Initialize the logger
-logging.basicConfig(filename='file_utils.log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s')
+class FileUtils:
+    def __init__(self):
+        # Initialize the logger
+        self.logger = logging.getLogger('file_utils')
+        self.logger.setLevel(logging.INFO)
+        handler = logging.FileHandler('file_utils.log')
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s: %(message)s')
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
 
-# Function to check if a file exists
-def file_exists(file_path):
-    try:
-        return os.path.exists(file_path)
-    except Exception as e:
-        logging.error(f"Failed to check file existence. Error: {str(e)}")
-        raise Exception("Failed to check file existence")
+    def file_exists(self, file_path):
+        try:
+            return os.path.exists(file_path)
+        except OSError as e:
+            self.logger.error(f"Failed to check file existence. Error: {str(e}")
+            return False
 
-# Function to create a directory if it doesn't exist
-def create_directory(directory_path):
-    try:
-        if not os.path.exists(directory_path):
-            os.makedirs(directory_path)
-            logging.info(f"Created directory: {directory_path}")
-    except OSError as e:
-        logging.error(f"Failed to create directory: {directory_path}. Error: {str(e)}")
-        raise Exception(f"Failed to create directory: {directory_path}")
+    def create_directory(self, directory_path):
+        try:
+            if not os.path.exists(directory_path):
+                os.makedirs(directory_path)
+                self.logger.info(f"Created directory: {directory_path}")
+        except OSError as e:
+            self.logger.error(f"Failed to create directory: {directory_path}. Error: {str(e)}")
+            raise Exception(f"Failed to create directory: {directory_path}")
 
-# Function to move a file to a different location
-def move_file(source_path, destination_path):
-    try:
-        shutil.move(source_path, destination_path)
-        logging.info(f"Moved file from {source_path} to {destination_path}")
-    except FileNotFoundError:
-        logging.error(f"File not found: {source_path}")
-        raise Exception(f"File not found: {source_path}")
-    except Exception as e:
-        logging.error(f"Failed to move file. Error: {str(e)}")
-        raise Exception(f"Failed to move file from {source_path} to {destination_path}")
+    def move_file(self, source_path, destination_path):
+        try:
+            if self.file_exists(source_path):
+                shutil.move(source_path, destination_path)
+                self.logger.info(f"Moved file from {source_path} to {destination_path}")
+            else:
+                self.logger.error(f"Source file does not exist: {source_path}")
+        except OSError as e:
+            self.logger.error(f"Failed to move file. Error: {str(e)}")
 
-# Function to delete a file
-def delete_file(file_path):
-    try:
-        os.remove(file_path)
-        logging.info(f"Deleted file: {file_path}")
-    except FileNotFoundError:
-        logging.error(f"File not found: {file_path}")
-        raise Exception(f"File not found: {file_path}")
-    except Exception as e:
-        logging.error(f"Failed to delete file. Error: {str(e)}")
-        raise Exception(f"Failed to delete file: {file_path}")
+    def delete_file(self, file_path):
+        try:
+            if self.file_exists(file_path):
+                os.remove(file_path)
+                self.logger.info(f"Deleted file: {file_path}")
+            else:
+                self.logger.error(f"File does not exist: {file_path}")
+        except OSError as e:
+            self.logger.error(f"Failed to delete file. Error: {str(e)}")
 
-# Function to list files in a directory
-def list_files(directory_path):
-    try:
-        files = os.listdir(directory_path)
-        logging.info(f"Listed files in directory: {directory_path}")
-        return files
-    except FileNotFoundError:
-        logging.error(f"Directory not found: {directory_path}")
-        raise Exception(f"Directory not found: {directory_path}")
-    except Exception as e:
-        logging.error(f"Failed to list files. Error: {str(e)}")
-        raise Exception(f"Failed to list files in directory: {directory_path}")
+    def list_files(self, directory_path):
+        try:
+            files = os.listdir(directory_path)
+            self.logger.info(f"Listed files in directory: {directory_path}")
+            return files
+        except OSError as e:
+            self.logger.error(f"Failed to list files. Error: {str(e)}")
+            raise Exception(f"Failed to list files in directory: {directory_path}")
 
-# Function to check if a file exists
-def file_exists(file_path):
-    try:
-        return os.path.exists(file_path)
-    except Exception as e:
-        logging.error(f"Failed to check file existence. Error: {str(e)}")
-        raise Exception("Failed to check file existence")
+if __name__ == "__main":
+    file_utils = FileUtils()
+    
+    # Input your file and directory paths
+    file_path = 'example.txt'
+    directory_path = '~/RedTeamAIPlatform/'
 
-# Function to create a directory
-def create_directory(directory_path):
-    try:
-        if not os.path.exists(directory_path):
-            os.makedirs(directory_path)
-        return directory_path
-    except Exception as e:
-        logging.error(f"Failed to create directory. Error: {str(e)}")
-        raise Exception("Failed to create directory")
-
-# Function to move a file to a different location
-def move_file(source_path, destination_path):
-    try:
-        if file_exists(source_path):
-            shutil.move(source_path, destination_path)
-            logging.info(f"Moved file: {source_path} to {destination_path}")
-        else:
-            logging.error(f"Source file does not exist: {source_path}")
-            raise Exception("Source file does not exist")
-    except Exception as e:
-        logging.error(f"Failed to move file. Error: {str(e)}")
-        raise Exception("Failed to move file")
-
-# Function to delete a file
-def delete_file(file_path):
-    try:
-        if file_exists(file_path):
-            os.remove(file_path)
-            logging.info(f"Deleted file: {file_path}")
-        else:
-            logging.error(f"File does not exist: {file_path}")
-            raise Exception("File does not exist")
-    except Exception as e:
-        logging.error(f"Failed to delete file. Error: {str(e)}")
-        raise Exception("Failed to delete file")
-
+    file_utils.create_directory(directory_path)
+    file_utils.move_file(file_path, os.path.join(directory_path, os.path.basename(file_path)))
+    file_utils.delete_file(file_path)
+    files = file_utils.list_files(directory_path)
