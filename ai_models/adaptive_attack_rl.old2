@@ -10,21 +10,17 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger('AdaptiveAttackAgent')
 
 class AdaptiveAttackAgent:
-    def __init__(self, environment_name, learning_rate=0.0003, policy='MlpPolicy'):
+    def __init__(self, environment_name, learning_rate=0.0003):
         self.environment = gym.make(environment_name)
-        self.model = PPO(policy, self.environment, verbose=1, learning_rate=learning_rate)
+        self.model = PPO('MlpPolicy', self.environment, verbose=1, learning_rate=learning_rate)
         self.model_path = None
 
-    def train(self, time_steps=10000, progress_callback=None):
+    def train(self, time_steps=10000):
         try:
-            if progress_callback:
-                self.model.learn(total_timesteps=time_steps, callback=progress_callback)
-            else:
-                self.model.learn(total_timesteps=time_steps)
+            self.model.learn(total_timesteps=time_steps)
             logger.info("Training completed.")
         except Exception as e:
             logger.error(f"An error occurred during training: {e}")
-            raise
 
     def save_model(self, path):
         try:
@@ -77,16 +73,14 @@ def main():
     parser.add_argument('--load', help='Path to load an existing model')
     parser.add_argument('--evaluate', help='Evaluate the model for a given number of episodes', type=int)
     parser.add_argument('--learning-rate', help='Learning rate for the PPO model', type=float, default=0.0003)
-    parser.add_argument('--policy', help='Policy for the PPO model', type=str, default='MlpPolicy')
     args = parser.parse_args()
 
-    agent = AdaptiveAttackAgent(args.environment_name, learning_rate=args.learning_rate, policy=args.policy)
+    agent = AdaptiveAttackAgent(args.environment_name, learning_rate=args.learning_rate)
 
     if args.load:
         agent.load_model(args.load)
     if args.train:
-        progress_callback = ProgressCallback()  # Implement ProgressCallback as suggested
-        agent.train(args.train, progress_callback)
+        agent.train(args.train)
         if args.save:
             agent.save_model(args.save)
     if args.evaluate:
