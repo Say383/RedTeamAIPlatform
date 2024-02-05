@@ -17,7 +17,7 @@ scikit-learn==0.24.2
 
 # Additional utilities
 beautifulsoup4==4.10.0
-lxml==4.6.4
+lxml==4.9.1
 nmap==0.6.4
 
 # List of dependencies
