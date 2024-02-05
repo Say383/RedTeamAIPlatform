@@ -12,8 +12,8 @@ flask==2.2.5
 loguru==0.5.3
 
 # AI and machine learning
-tensorflow==2.7.0
-scikit-learn==1.0.1
+tensorflow==2.11.1
+scikit-learn==0.24.2
 
 # Additional utilities
 beautifulsoup4==4.10.0
