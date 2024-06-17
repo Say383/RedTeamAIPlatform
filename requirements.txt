@@ -13,7 +13,7 @@ loguru==0.5.3
 
 # AI and machine learning
 tensorflow==2.11.1
-scikit-learn==0.24.2
+scikit-learn==1.5.0
 
 # Additional utilities
 beautifulsoup4==4.10.0
